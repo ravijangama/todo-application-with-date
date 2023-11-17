@@ -129,13 +129,19 @@ app.get("/todos/:todoId/", async (request, response) => {
 //Get Todo With Date API 3
 app.get("/agenda/", async (request, response) => {
   const { date } = request.query;
-  const newDate = format(new Date(date), "yyyy-MM-dd");
-  console.log(Date.getMonth());
+  const newDate = new Date(`${date}`);
+  const Year = newDate.getFullYear();
+  const Month = newDate.getMonth();
+  const D = newDate.getDate();
   const getTodoQuery = `
     SELECT 
          * 
     FROM 
-        todo; `;
+        todo
+    WHERE 
+        CAST(strftime("%Y",due_date) AS INT)=${Year}
+        AND CAST(strftime("%m",due_date) AS INT)=${Month}
+        AND CAST(strftime("%d",due_date) AS INT)=${D};`;
   const todoList = await db.get(getTodoQuery);
   response.send(todoList);
 });
