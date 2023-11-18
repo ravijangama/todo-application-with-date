@@ -177,18 +177,44 @@ app.put("/todos/:todoId/", async (request, response) => {
   const { todoId } = request.params;
   const requestBody = request.body;
   let updatedColumn = "";
+  let myArray = null;
+  let result = null;
   switch (true) {
     case requestBody.status !== undefined:
-      updatedColumn = "Status";
+      myArray = ["DONE", "IN PROGRESS", "TO DO"];
+      result = myArray.includes(requestBody.status);
+      if (result) {
+        updatedColumn = "Status";
+      } else {
+        response.status(400);
+        response.send("Invalid Todo Status");
+        return;
+      }
       break;
     case requestBody.priority !== undefined:
-      updatedColumn = "Priority";
+      myArray = ["HIGH", "MEDIUM", "LOW"];
+      result = myArray.includes(requestBody.priority);
+      if (result) {
+        updatedColumn = "Priority";
+      } else {
+        response.status(400);
+        response.send("Invalid Todo Priority");
+        return;
+      }
       break;
     case requestBody.todo !== undefined:
       updatedColumn = "Todo";
       break;
     case requestBody.category !== undefined:
-      updatedColumn = "Category";
+      myArray = ["WORK", "HOME", "LEARNING"];
+      result = myArray.includes(requestBody.category);
+      if (result) {
+        updatedColumn = "Category";
+      } else {
+        response.status(400);
+        response.send("Invalid Todo Category");
+        return;
+      }
       break;
     case requestBody.dueDate !== undefined:
       updatedColumn = "Due Date";
