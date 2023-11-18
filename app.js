@@ -246,8 +246,7 @@ app.put("/todos/:todoId/", async (request, response) => {
             due_date="${dueDate}"
           WHERE 
              id=${todoId};`;
-  const updatedTodo = await db.run(updateQuery);
-  console.log(todoList);
+  await db.run(updateQuery);
   response.send(`${updatedColumn} Updated`);
 });
 //Delete Todo API 6
