@@ -166,6 +166,42 @@ app.get("/agenda/", async (request, response) => {
 app.post("/todos/", async (request, response) => {
   const todoItem = request.body;
   const { id, todo, priority, status, category, dueDate } = todoItem;
+   let myArray = null;
+  let result = null;
+  switch (true) {
+    case status !== undefined:
+      myArray = ["DONE", "IN PROGRESS", "TO DO"];
+      result = myArray.includes(status);
+      if (!result) {
+        response.status(400);
+        response.send("Invalid Todo Status");
+        return;
+      }
+    case priority !== undefined:
+      myArray = ["HIGH", "MEDIUM", "LOW"];
+      result = myArray.includes(priority);
+      if (!result) {
+        response.status(400);
+        response.send("Invalid Todo Priority");
+        return;
+      }
+    case category !== undefined:
+      myArray = ["WORK", "HOME", "LEARNING"];
+      result = myArray.includes(category);
+      if (!result) {
+        response.status(400);
+        response.send("Invalid Todo Category");
+        return;
+      }
+
+    case dueDate !== undefined:
+      result = isValid(new Date(dueDate));
+      if (!result) {
+        response.status(400);
+        response.send("Invalid Due Date");
+        return;
+      }
+  }
   const addTodoQuery = `
       INSERT INTO todo (id,todo,category,priority,status,due_date)
       VALUES(
@@ -176,7 +212,7 @@ app.post("/todos/", async (request, response) => {
           "${status}",
           "${dueDate}"
       );`;
-  await db.run(addTodoQuery);
+  getList = await db.run(addTodoQuery);
   response.send("Todo Successfully Added");
 });
 //Update Todo API 5
