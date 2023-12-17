@@ -224,7 +224,14 @@ app.put("/todos/:todoId/", async (request, response) => {
       }
       break;
     case requestBody.dueDate !== undefined:
-      updatedColumn = "Due Date";
+      result = isValid(new Date(requestBody.dueDate));
+      if (result) {
+        updatedColumn = "Due Date";
+      } else {
+        response.status(400);
+        response.send("Invalid Due Date");
+        return;
+      }
       break;
   }
   const getTodoQuery = `
