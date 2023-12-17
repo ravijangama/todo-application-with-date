@@ -139,17 +139,24 @@ app.get("/todos/:todoId/", async (request, response) => {
 //Get Todo With Date API 3
 app.get("/agenda/", async (request, response) => {
   const { date } = request.query;
-  const newDate = format(new Date(`${date}`), "yyyy-MM-dd");
-  const getTodoQuery = `
+  const result = isValid(new Date(date));
+  let newDate = null;
+  if (result) {
+    newDate = format(new Date(date), "yyyy-MM-dd");
+    const getTodoQuery = `
     SELECT 
          * 
     FROM 
         todo
     WHERE
         due_date="${newDate}" ;`;
-  const todoList = await db.all(getTodoQuery);
-  if (todoList[0] !== undefined) {
-    response.send(todoList.map((eachTodo) => convertDBToTodoList(eachTodo)));
+    const todoList = await db.all(getTodoQuery);
+    if (todoList[0] !== undefined) {
+      response.send(todoList.map((eachTodo) => convertDBToTodoList(eachTodo)));
+    } else {
+      response.status(400);
+      response.send("Invalid Due Date");
+    }
   } else {
     response.status(400);
     response.send("Invalid Due Date");
